@@ -1,0 +1,113 @@
+
+<html>
+    <head>
+<style>
+  .login-container {
+    max-width: 400px;
+    margin: 40px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .login-container h2 {
+    text-align: center;
+    color: #2a4365;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+
+  .form-group input:focus {
+    border-color: #3182ce;
+    outline: none;
+    box-shadow: 0 0 4px #63b3ed;
+  }
+
+  .login-btn {
+    width: 100%;
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .login-btn:hover {
+    background-color: #2b6cb0;
+  }
+
+  .signup-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #444;
+  }
+
+  .signup-link a {
+    color: #2b6cb0;
+    text-decoration: none;
+  }
+
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+  .error-message {
+      background-color: #fed7d7;
+      color: #c53030;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 6px;
+    }
+</style>
+</head>
+<body>
+<div class="login-container">
+  <h2>Login to Your Account</h2>
+  {% if error %}
+  <div class="error-message">
+    {{ error }}
+  </div>
+  {% endif %}
+  <form method="POST">
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" name="email" required />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" name="password" required />
+    </div>
+    <button type="submit" class="login-btn">Login</button>
+  </form>
+  <div class="signup-link">
+    Don't have an account?
+    <a href="{{ url_for('signup') }}">Sign up here</a>
+  </div>
+ 
+</div>
+</body>
+</html>

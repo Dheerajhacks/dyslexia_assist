@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multiple Choice</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+
+        .editor-container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .exercise-block {
+            margin-bottom: 20px;
+        }
+
+        .exercise-block p {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        .result p {
+            padding: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <h2>✅ Multiple Choice</h2>
+        <form id="mcqForm">
+            <div class="exercise-block">
+                <p>Which is correct?</p>
+                <label><input type="radio" name="q1" value="becaus"> becaus</label>
+                <label><input type="radio" name="q1" value="because" data-correct="true"> because</label>
+                <label><input type="radio" name="q1" value="becouse"> becouse</label>
+            </div>
+
+            <div class="exercise-block">
+                <p>Which word is spelled correctly?</p>
+                <label><input type="radio" name="q2" value="jumpping"> jumpping</label>
+                <label><input type="radio" name="q2" value="jumping" data-correct="true"> jumping</label>
+                <label><input type="radio" name="q2" value="jumpin"> jumpin</label>
+            </div>
+
+            <button type="submit">Check</button>
+        </form>
+
+        <div id="mcqResult" class="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("mcqForm").onsubmit = function(e) {
+            e.preventDefault();
+            let result = "";
+            const answeredQuestions = new Set();
+
+            document.querySelectorAll("input[type=radio]").forEach(input => {
+                if (input.checked && !answeredQuestions.has(input.name)) {
+                    answeredQuestions.add(input.name);
+                    if (input.dataset.correct) {
+                        result += `<p>✅ ${input.value} is correct</p>`;
+                    } else {
+                        result += `<p>❌ ${input.value} is incorrect</p>`;
+                    }
+                }
+            });
+
+            document.getElementById("mcqResult").innerHTML = result;
+        }
+    </script>
+</body>
+</html>

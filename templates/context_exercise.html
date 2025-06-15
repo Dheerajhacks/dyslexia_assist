@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🧠 Word Match for Dyslexia Practice</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      padding: 30px;
+    }
+
+    .editor-container {
+      max-width: 700px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    p {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #555;
+    }
+
+    .match-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .draggable, .dropzone {
+      padding: 14px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 18px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .draggable {
+      background-color: #d0e8ff;
+      cursor: grab;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      user-select: none;
+    }
+
+    .dropzone {
+      border: 2px dashed #aaa;
+      background-color: #f9f9f9;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dropzone.highlight {
+      background-color: #e6ffe6;
+      border-color: #4caf50;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 20px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      width: 100%;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+<div class="editor-container">
+  <h2>🧠 Match the Word</h2>
+  <p>Drag the word that matches the meaning</p>
+  <div class="match-grid">
+    <!-- Dropzones with friendly descriptions -->
+    <div class="dropzone" data-correct="cat">_______ (a small animal that says "meow")</div>
+    <div class="dropzone" data-correct="sun">_______ (bright light in the sky during day)</div>
+    <div class="dropzone" data-correct="book">_______ (you read this and it has pages)</div>
+    <div class="dropzone" data-correct="happy">_______ (feeling good or smiling)</div>
+    <div class="dropzone" data-correct="run">_______ (to move fast with your feet)</div>
+
+    <!-- Draggable simple words -->
+    <div class="draggable" draggable="true">book</div>
+    <div class="draggable" draggable="true">happy</div>
+    <div class="draggable" draggable="true">run</div>
+    <div class="draggable" draggable="true">cat</div>
+    <div class="draggable" draggable="true">sun</div>
+  </div>
+
+  <button onclick="checkMatch()">Check Answers</button>
+  <div id="matchResult" class="result"></div>
+</div>
+
+<script>
+  const draggables = document.querySelectorAll('.draggable');
+  const dropzones = document.querySelectorAll('.dropzone');
+  let dragged = null;
+
+  // Shuffle the draggable items
+  const shuffle = (items) => {
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i].textContent, items[j].textContent] = [items[j].textContent, items[i].textContent];
+    }
+  };
+
+  shuffle(Array.from(draggables));
+
+  // Drag logic
+  draggables.forEach(item => {
+    item.addEventListener('dragstart', () => dragged = item);
+  });
+
+  dropzones.forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      zone.classList.add('highlight');
+    });
+
+    zone.addEventListener('dragleave', () => zone.classList.remove('highlight'));
+
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('highlight');
+      if (zone.children.length === 0) {
+        zone.textContent = '';
+        zone.appendChild(dragged);
+      }
+    });
+  });
+
+  function checkMatch() {
+    let correct = 0;
+    dropzones.forEach(zone => {
+      if (zone.children.length > 0 && zone.children[0].textContent === zone.dataset.correct) {
+        correct++;
+        zone.style.borderColor = "#4CAF50";
+        zone.style.backgroundColor = "#e6ffe6";
+      } else {
+        zone.style.borderColor = "#f44336";
+        zone.style.backgroundColor = "#ffe6e6";
+      }
+    });
+    const total = dropzones.length;
+    document.getElementById("matchResult").innerHTML = `<strong>${correct} out of ${total} correct</strong>`;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dyslexia Word Choice</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f3f3;
+            padding: 20px;
+        }
+
+        .editor-container {
+            max-width: 650px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .exercise-block {
+            margin-bottom: 20px;
+        }
+
+        .sentence {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 25px;
+            font-size: 16px;
+        }
+
+        .result p {
+            margin: 6px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <h2>🔤 Choose the Correct Word</h2>
+        <form id="wordChoiceForm">
+            <div class="exercise-block">
+                <div class="sentence">I like _____ shoes.</div>
+                <select name="blank1" data-correct="your">
+                    <option value="">-- Select --</option>
+                    <option value="your">your</option>
+                    <option value="you're">you're</option>
+                </select>
+            </div>
+            <div class="exercise-block">
+                <div class="sentence">_____ going to love this game!</div>
+                <select name="blank2" data-correct="you're">
+                    <option value="">-- Select --</option>
+                    <option value="your">your</option>
+                    <option value="you're">you're</option>
+                </select>
+            </div>
+            <div class="exercise-block">
+                <div class="sentence">She went _____ the store.</div>
+                <select name="blank3" data-correct="to">
+                    <option value="">-- Select --</option>
+                    <option value="to">to</option>
+                    <option value="too">too</option>
+                    <option value="two">two</option>
+                </select>
+            </div>
+            <div class="exercise-block">
+                <div class="sentence">I want that one _____.</div>
+                <select name="blank4" data-correct="too">
+                    <option value="">-- Select --</option>
+                    <option value="to">to</option>
+                    <option value="too">too</option>
+                    <option value="two">two</option>
+                </select>
+            </div>
+            <div class="exercise-block">
+                <div class="sentence">They left _____ books on the table.</div>
+                <select name="blank5" data-correct="their">
+                    <option value="">-- Select --</option>
+                    <option value="their">their</option>
+                    <option value="there">there</option>
+                    <option value="they're">they're</option>
+                </select>
+            </div>
+            <button type="submit">Check Answers</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("wordChoiceForm").onsubmit = function(e) {
+            e.preventDefault();
+            let resultText = "";
+            let correctCount = 0;
+
+            document.querySelectorAll("select").forEach(select => {
+                const expected = select.dataset.correct;
+                const userChoice = select.value;
+                if (userChoice === expected) {
+                    resultText += `<p>✅ ${userChoice} is correct.</p>`;
+                    correctCount++;
+                } else {
+                    resultText += `<p>❌ ${userChoice || "[blank]"} is incorrect (Expected: ${expected})</p>`;
+                }
+            });
+
+            resultText += `<p><strong>Score: ${correctCount} / 5</strong></p>`;
+            document.getElementById("result").innerHTML = resultText;
+        }
+    </script>
+</body>
+</html>

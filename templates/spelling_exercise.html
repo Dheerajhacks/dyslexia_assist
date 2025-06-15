@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spelling Correction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #e1bee7);
+            padding: 40px;
+        }
+
+        .editor-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #4a148c;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .exercise-block {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            transition: border 0.3s ease;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus {
+            border-color: #7e57c2;
+            outline: none;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #7e57c2;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #5e35b1;
+        }
+
+        .result {
+            margin-top: 25px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .result p {
+            padding: 8px 0;
+            font-size: 16px;
+        }
+
+        .correct {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .incorrect {
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <h2>📝 Spelling Practice Game</h2>
+        <form id="spellingForm">
+            <div class="exercise-block">
+                <label>Incorrect: lzy →</label>
+                <input type="text" name="word1" data-correct="lazy" />
+            </div>
+            <div class="exercise-block">
+                <label>Incorrect: runing →</label>
+                <input type="text" name="word2" data-correct="running" />
+            </div>
+            <div class="exercise-block">
+                <label>Incorrect: becaus →</label>
+                <input type="text" name="word3" data-correct="because" />
+            </div>
+            <div class="exercise-block">
+                <label>Incorrect: definate →</label>
+                <input type="text" name="word4" data-correct="definite" />
+            </div>
+            <div class="exercise-block">
+                <label>Incorrect: enviroment →</label>
+                <input type="text" name="word5" data-correct="environment" />
+            </div>
+            {% for i in range(5) %}
+                <div class="exercise-block">
+                    <label>Incorrect: {{ words[i].user }} →</label>
+                    <input type="text" name="word{{ i + 6 }}" data-correct="{{ words[i].correct }}" />
+                </div>
+            {% endfor %}
+            <button type="submit">✅ Check My Answers</button>
+        </form>
+        <div id="spellingResult" class="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("spellingForm").onsubmit = function(e) {
+            e.preventDefault();
+            const inputs = document.querySelectorAll("input");
+            let result = "";
+            inputs.forEach(input => {
+                const correct = input.dataset.correct.trim().toLowerCase();
+                const answer = input.value.trim().toLowerCase();
+                if (answer === correct) {
+                    result += `<p class="correct">✅ ${answer} is correct!</p>`;
+                } else {
+                    result += `<p class="incorrect">❌ ${answer || "[blank]"} is incorrect. Expected: <strong>${correct}</strong></p>`;
+                }
+            });
+            document.getElementById("spellingResult").innerHTML = result;
+            document.getElementById("spellingResult").scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
+    

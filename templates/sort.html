@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Word Sorting</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f6fb;
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #2a7ae2;
+    }
+
+    .scramble-box {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 30px 0;
+    }
+
+    .letter {
+      background: #ffffff;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 1rem;
+      width: 200px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 1rem;
+      background-color: #2a9d8f;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Unscramble the Word</h2>
+
+  <!-- Scrambled Words -->
+  <div class="scramble-box" id="scrambled1">
+    <div class="letter">o</div>
+    <div class="letter">t</div>
+    <div class="letter">a</div>
+    <div class="letter">g</div>
+  </div>
+
+  <div class="scramble-box" id="scrambled2">
+    <div class="letter">t</div>
+    <div class="letter">c</div>
+    <div class="letter">a</div>
+  </div>
+
+  <div class="scramble-box" id="scrambled3">
+    <div class="letter">a</div>
+    <div class="letter">b</div>
+    <div class="letter">t</div>
+  </div>
+
+  <div class="scramble-box" id="scrambled4">
+    <div class="letter">r</div>
+    <div class="letter">a</div>
+    <div class="letter">t</div>
+  </div>
+
+  <input type="text" id="user-input" placeholder="Your guess" />
+  <br />
+  <button onclick="checkWord()">Check</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function checkWord() {
+      const input = document.getElementById("user-input").value.toLowerCase().trim();
+      const resultBox = document.getElementById("result");
+
+      // Check if the word matches the correct answer
+      if (input === "goat") {
+        resultBox.textContent = "✅ Correct! (goat)";
+        resultBox.style.color = "green";
+      } else if (input === "cat") {
+        resultBox.textContent = "✅ Correct! (cat)";
+        resultBox.style.color = "green";
+      } else if (input === "bat") {
+        resultBox.textContent = "✅ Correct! (bat)";
+        resultBox.style.color = "green";
+      } else if (input === "art") {
+        resultBox.textContent = "✅ Correct! (art)";
+        resultBox.style.color = "green";
+      } else {
+        resultBox.textContent = "❌ Try again!";
+        resultBox.style.color = "red";
+      }
+    }
+  </script>
+
+</body>
+</html>

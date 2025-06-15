@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dyslexia Assist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes drift {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.8;
+      }
+      50% {
+        transform: translateY(-20px) translateX(10px);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.8;
+      }
+    }
+
+    .circle {
+      animation: drift 6s ease-in-out infinite;
+    }
+
+    .circle:nth-child(2) {
+      animation-delay: 2s;
+      width: 80px;
+      height: 80px;
+    }
+
+    .circle:nth-child(3) {
+      animation-delay: 4s;
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-50 relative overflow-hidden">
+
+  <!-- Floating circles with higher opacity -->
+  <div class="absolute top-10 left-10 w-60 h-60 bg-blue-200 rounded-full blur-xl circle"></div>
+  <div class="absolute bottom-20 right-16 bg-blue-300 rounded-full blur-xl circle"></div>
+  <div class="absolute top-24 right-24 bg-purple-200 rounded-full blur-xl circle"></div>
+
+  <!-- Main Content -->
+  <div class="text-center space-y-6 ">
+    <h1 class="text-4xl font-bold text-blue-600">Welcome to Dyslexia Assist</h1>
+    <p class="text-lg text-gray-600 max-w-xl mx-auto">
+      This app helps detect and support users with dyslexia using text, audio, and image input. Improve your skills interactively!
+    </p>
+    <div class="space-x-4">
+      <a href="{{ url_for('login') }}" class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">Login</a>
+      <a href="{{ url_for('signup') }}" class="px-6 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition">Signup</a>
+    </div>
+  </div>
+
+</body>
+</html>

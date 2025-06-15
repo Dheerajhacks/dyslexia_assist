@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">🧠 Dyslexia Detection App</a>
+        <div class="d-flex align-items-center">
+            <span class="text-light me-3">Welcome, {{ username }}</span>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Settings</h5>
+                <form method="POST" action="{{ url_for('app_page') }}">
+                    <div class="mb-3">
+                        <label for="font_preference" class="form-label">Font Preference</label>
+                        <select class="form-select" id="font_preference" name="font_preference">
+                            <option value="Arial" {% if font_preference == 'Arial' %}selected{% endif %}>Arial</option>
+                            <option value="OpenDyslexic" {% if font_preference == 'OpenDyslexic' %}selected{% endif %}>OpenDyslexic</option>
+                            <option value="Verdana" {% if font_preference == 'Verdana' %}selected{% endif %}>Verdana</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Update Settings</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">About</h5>
+                <p class="card-text">
+                    This tool helps detect potential dyslexia indicators and provides personalized assistance.
+                </p>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item">Supports text, audio, and image input</li>
+                    <li class="list-group-item">Minimum 20 characters recommended</li>
+                    <li class="list-group-item">Not a diagnostic tool</li>
+                </ul>
+                <button class="btn btn-outline-primary w-100" id="retrainBtn">Retrain Model</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Input Method</h5>
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <div class="btn-group w-100" role="group" aria-label="Input method">
+                            <input type="radio" class="btn-check" name="input_method" id="textInput" value="text" autocomplete="off" checked>
+                            <label class="btn btn-outline-primary" for="textInput">Text</label>
+                            
+                            <input type="radio" class="btn-check" name="input_method" id="audioInput" value="audio" autocomplete="off">
+                            <label class="btn btn-outline-primary" for="audioInput">Audio</label>
+                            
+                            <input type="radio" class="btn-check" name="input_method" id="imageInput" value="image" autocomplete="off">
+                            <label class="btn btn-outline-primary" for="imageInput">Image</label>
+                        </div>
+                    </div>
+                    
+                    <div id="textInputSection">
+                        <div class="mb-3">
+                            <label for="text_input" class="form-label">Enter text to analyze</label>
+                            <textarea class="form-control" id="text_input" name="text_input" rows="5" placeholder="Type or paste text here (minimum 20 characters)..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div id="audioInputSection" style="display: none;">
+                        <div class="mb-3">
+                            <label for="audio_file" class="form-label">Upload audio file (WAV, MP3)</label>
+                            <input class="form-control" type="file" id="audio_file" name="audio_file" accept=".wav,.mp3">
+                        </div>
+                    </div>
+                    
+                    <div id="imageInputSection" style="display: none;">
+                        <div class="mb-3">
+                            <label for="image_file" class="form-label">Upload image file (PNG, JPG)</label>
+                            <input class="form-control" type="file" id="image_file" name="image_file" accept=".png,.jpg,.jpeg">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">Analyze</button>
+                </form>
+            </div>
+        </div>
+        {% if transcript %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Transcribed Text</h5>
+                <div class="p-3 border rounded bg-light mb-3" style="min-height: 100px;">
+                    {{ transcript }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Modified: Conditional rendering of CourseModule button based on has_errors -->
+      
+
+        {% if result %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Analysis Results</h5>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Original Text</h6>
+                        <div class="p-3 border rounded bg-light mb-3" style="min-height: 150px;">
+                            {{ original_text }}
+                        </div>
+                    </div>
+                    
+                    {% if corrected_text and corrected_text != original_text %}
+                    <div class="col-md-6">
+                        <h6>Corrected Text</h6>
+                        <div class="p-3 border rounded bg-light mb-3" style="min-height: 150px;">
+                            {{ corrected_text }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Modified: Conditional message based on has_errors -->
+                {% if has_errors %}
+                <div class="alert alert-danger">
+                    <strong>⚠ Potential dyslexia indicators detected</strong>
+                    {% if errors %}
+                    <p>Errors found: 
+                        {% for error in errors %}
+                        {{ error[0] }} → {{ error[1] }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                    {% endif %}
+                    {% if has_errors %}
+                    <div class="d-grid gap-2 mb-4">
+                        <a href="{{ url_for('module') }}" class="btn btn-danger btn-lg">Go to CourseModule</a>
+                    </div>
+                    {% endif %}
+                    <hr>
+
+                    <p class="mb-0">
+                        <strong>Suggestions:</strong><br>
+                        - Consider professional screening<br>
+                        - Try dyslexia-friendly reading tools<br>
+                        - Use multi-sensory learning techniques
+                    </p>
+                </div>
+                {% else %}
+                <div class="alert alert-success">
+                    <strong>✅ No dyslexia indicators detected</strong>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const textInput = document.getElementById('textInput');
+    const audioInput = document.getElementById('audioInput');
+    const imageInput = document.getElementById('imageInput');
+    
+    const textSection = document.getElementById('textInputSection');
+    const audioSection = document.getElementById('audioInputSection');
+    const imageSection = document.getElementById('imageInputSection');
+    
+    textInput.addEventListener('change', function() {
+        textSection.style.display = 'block';
+        audioSection.style.display = 'none';
+        imageSection.style.display = 'none';
+    });
+    
+    audioInput.addEventListener('change', function() {
+        textSection.style.display = 'none';
+        audioSection.style.display = 'block';
+        imageSection.style.display = 'none';
+    });
+    
+    imageInput.addEventListener('change', function() {
+        textSection.style.display = 'none';
+        audioSection.style.display = 'none';
+        imageSection.style.display = 'block';
+    });
+    
+    document.getElementById('retrainBtn').addEventListener('click', function() {
+        fetch('/retrain', {
+            method: 'POST'
+        }).then(response => response.json())
+          .then(data => {
+              alert(data.message);
+          });
+    });
+});
+</script>
+{% endblock %}

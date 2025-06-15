@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Matching Words for Dyslexia Support</title>
+  <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'OpenDyslexic', Arial, sans-serif;
+      background: #f9fbff;
+      margin: 0;
+      padding: 40px;
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      color: #1e88e5;
+      font-size: 30px;
+      margin-bottom: 30px;
+    }
+
+    .match-container {
+      display: flex;
+      justify-content: space-around;
+      max-width: 1000px;
+      margin: 50px auto;
+      gap: 50px;
+    }
+
+    .column {
+      width: 45%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .item {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      cursor: grab;
+      font-size: 22px;
+      text-align: center;
+      transition: transform 0.2s ease;
+      font-weight: bold;
+    }
+
+    .item:active {
+      transform: scale(1.05);
+    }
+
+    .dropzone {
+      min-height: 80px;
+      background: #e3f2fd;
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 22px;
+      text-align: center;
+      line-height: 1.4;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      transition: background-color 0.3s ease;
+    }
+
+    .dropzone:hover {
+      background-color: #bbdefb;
+    }
+
+    .correct {
+      background-color: #d4edda !important;
+      color: #155724;
+    }
+
+    .incorrect {
+      background-color: #f8d7da !important;
+      color: #721c24;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      height: 1px;
+      width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+    }
+
+    .audio-feedback {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px;
+      background: #ffeb3b;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎯 Match the Words with Their Meanings (Dyslexia Support)</h2>
+  
+  <div class="audio-feedback" id="audioFeedback" aria-label="Audio Feedback">
+    🔊
+  </div>
+
+  <div class="match-container">
+    <!-- Draggable Words -->
+    <div class="column" id="words" aria-label="Words to drag">
+      <div class="item" draggable="true" data-match="bright" role="button" aria-grabbed="false">bright</div>
+      <div class="item" draggable="true" data-match="clear" role="button" aria-grabbed="false">clear</div>
+      <div class="item" draggable="true" data-match="strong" role="button" aria-grabbed="false">strong</div>
+    </div>
+
+    <!-- Drop Zones -->
+    <div class="column" aria-label="Meanings to match">
+      <div class="dropzone" data-answer="strong">having great power</div>
+      <div class="dropzone" data-answer="clear">easy to see or understand</div>
+      <div class="dropzone" data-answer="bright">giving off light</div>
+    </div>
+  </div>
+
+  <script>
+    const draggables = document.querySelectorAll(".item");
+    const dropzones = document.querySelectorAll(".dropzone");
+    const audioFeedbackButton = document.getElementById("audioFeedback");
+
+    function playAudio(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      speechSynthesis.speak(utterance);
+    }
+
+    draggables.forEach(item => {
+      item.addEventListener("dragstart", e => {
+        e.dataTransfer.setData("text/plain", item.dataset.match);
+        item.classList.add("dragging");
+        item.setAttribute("aria-grabbed", "true");
+        playAudio(`Drag the word ${item.textContent}`);
+      });
+
+      item.addEventListener("dragend", () => {
+        item.classList.remove("dragging");
+        item.setAttribute("aria-grabbed", "false");
+      });
+    });
+
+    dropzones.forEach(zone => {
+      zone.addEventListener("dragover", e => e.preventDefault());
+
+      zone.addEventListener("drop", e => {
+        const draggedWord = e.dataTransfer.getData("text/plain");
+        const correctAnswer = zone.dataset.answer;
+
+        if (draggedWord === correctAnswer) {
+          zone.textContent = draggedWord;
+          zone.classList.add("correct");
+          zone.classList.remove("incorrect");
+          playAudio(`Correct! ${draggedWord} matches ${zone.textContent}`);
+        } else {
+          zone.classList.add("incorrect");
+          setTimeout(() => zone.classList.remove("incorrect"), 1000);
+          playAudio("Oops, that's incorrect. Try again!");
+        }
+      });
+    });
+
+    // Audio feedback button
+    audioFeedbackButton.addEventListener("click", () => {
+      const instructions = "Match the words with their meanings by dragging and dropping them in the correct areas.";
+      playAudio(instructions);
+    });
+  </script>
+
+</body>
+</html>

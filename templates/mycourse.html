@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Typing and Voice Practice</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+    <h1 class="text-2xl font-bold mb-4 text-center">Typing and Voice Practice</h1>
+    <p class="mb-4 text-center">Type or speak the following paragraph:</p>
+    <p id="referenceText" class="mb-4 text-center bg-gray-50 p-4 rounded">{{ reference_text }}</p>
+
+    <button id="playAudio" class="mb-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">Play Audio</button>
+
+    <textarea id="userInput" class="w-full h-24 p-2 border rounded mb-4" placeholder="Type here..."></textarea>
+
+    <button id="submitTextButton" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full mb-2">Submit Text</button>
+
+    <button id="startBtn">Start Listening</button>
+    <button id="submitAudio" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 w-full mb-4">Submit Audio File</button>
+
+    <!-- New section for transcription -->
+    <div id="transcription" class="mb-4 text-gray-700"></div>
+
+    <div id="result" class="mt-4 text-red-500"></div>
+  </div>
+
+  <script>
+    let transcribedText = '';
+
+    // Load and play reference audio
+    fetch('/generate_audio')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('playAudio').onclick = () => {
+          const audio = new Audio(data.audio);
+          audio.play();
+        };
+      });
+
+    function checkText(inputText) {
+      fetch('/check_text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: inputText })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const resultDiv = document.getElementById('result');
+        if (data.incorrect.length > 0) {
+          let result = 'Incorrect words (yours/correct):<br>';
+          data.incorrect.forEach(({ user, correct }) => {
+            result += `'${user || ''}' should be '${correct || ''}'<br>`;
+          });
+          resultDiv.innerHTML = result;
+          resultDiv.classList.add('text-red-500');
+          resultDiv.classList.remove('text-green-500');
+
+          data.pronunciations.forEach(({ audio }) => {
+            const audioElement = new Audio(audio);
+            audioElement.play();
+          });
+        } else {
+          resultDiv.innerHTML = 'All words are correct!';
+          resultDiv.classList.remove('text-red-500');
+          resultDiv.classList.add('text-green-500');
+        }
+      });
+    }
+
+    // Submit typed text
+    document.getElementById('submitTextButton').addEventListener('click', () => {
+      const inputText = transcribedText || document.getElementById('userInput').value.trim();
+      if (!inputText) {
+        document.getElementById('result').innerHTML = 'Please type or upload something first.';
+        return;
+      }
+      checkText(inputText);
+    });
+
+    // Submit uploaded audio
+    finalTranscript = ""
+    const button = document.getElementById('startBtn');
+    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+    transcription.innerText = "Sorry, your browser doesn't support SpeechRecognition.";
+    button.disabled = true;
+    } else {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = true; // Disable real-time display
+    recognition.continuous = false;
+
+    recognition.onstart = () => {
+        button.innerText = "Listening...";
+        transcription.innerText = "Listening...";
+    };
+
+    recognition.onresult = (event) => {
+        finalTranscript = Array.from(event.results)
+        .map(result => result[0].transcript)
+        .join('');
+    };
+
+    recognition.onend = () => {
+        button.innerText = "Start Listening";
+        transcription.innerText = finalTranscript ? `You said: "${finalTranscript}"` : "Didn't catch that.";
+    };
+
+    recognition.onerror = (event) => {
+        transcription.innerText = "Error: " + event.error;
+    };
+
+    button.onclick = () => {
+        finalTranscript = "";
+        recognition.start();
+    };
+    }
+    document.getElementById('submitAudio').addEventListener('click', () => {
+        checkText(finalTranscript)
+    });
+    
+//   });
+    // Submit with Enter (no shift)
+    document.getElementById('userInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('submitTextButton').click();
+      }
+    });
+  </script>
+</body>
+</html>

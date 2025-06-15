@@ -1,20 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from werkzeug.utils import secure_filename
 from pymongo import MongoClient
 import os
 import pyttsx3
 import base64
-import whisper
 import tempfile
 import random
 import google.generativeai as genai
-
+from pymongo import MongoClient
+import re
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-from pymongo import MongoClient
-from collections import Counter
 
 
 client = MongoClient('mongodb://localhost:27017/')
@@ -190,16 +187,15 @@ def generate_audio():
         audio_base64 = base64.b64encode(f.read()).decode('utf-8')
     os.remove(temp_path)
     return jsonify({'audio': f'data:audio/wav;base64,{audio_base64}'})
-import re
 
-def clean_word(word):
-    # Remove punctuation like -, ., ,
-    return re.sub(r'[.,]', '', word.lower())
+# def clean_word(word):
+#     # Remove punctuation like -, ., ,
+#     return re.sub(r'[.,]', '', word.lower())
 
 import difflib
 
-# def clean_word(word):
-#     return ''.join(char.lower() for char in word if char.isalnum())
+def clean_word(word):
+    return ''.join(char.lower() for char in word if char.isalnum())
 
 def compare_texts(user_text, reference_text):
     reference_words = reference_text.split()

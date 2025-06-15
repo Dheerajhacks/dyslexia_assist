@@ -8,6 +8,7 @@ import random
 import google.generativeai as genai
 from pymongo import MongoClient
 import re
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -22,8 +23,9 @@ users_collection = db['users']
 logs_collection = db['logs']
 
 
-
-genai.configure(api_key='AIzaSyC58GQj_ICnM-eX9hVi5IhKmTH6TzjnfDA')
+load_dotenv()
+api_key = os.getenv("GENAI_API_KEY")
+genai.configure(api_key=api_key)
 
 engine = pyttsx3.init()
 
